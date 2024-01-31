@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Looping Timer</title>
+<style>
+  .timer {
+    font-family: monospace;
+    font-size: 2em;
+    border: 2px solid black;
+    padding: 10px;
+    display: inline-block;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="timer" onclick="toggleTimer()">00:00</div>
+
+<script>
+  let timerDisplay = document.querySelector('.timer');
+  let timerInterval;
+  let timeLeft = 90; // Initial time
+  let loopingTime = 150; // Looping time
+
+  function formatTime(seconds) {
+    let minutes = Math.floor(seconds / 60);
+    let remainingSeconds = seconds % 60;
+    return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  }
+
+  function updateTimer() {
+    timerDisplay.textContent = formatTime(timeLeft);
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(function() {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateTimer();
+      } else {
+        clearInterval(timerInterval);
+        timeLeft = loopingTime;
+        startTimer();
+      }
+    }, 1000);
+  }
+
+  function toggleTimer() {
+    if (!timerInterval) {
+      startTimer();
+    } else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  // Detect double tap
+  let lastTap = 0;
+  timerDisplay.addEventListener('click', function(event) {
+    let now = new Date().getTime();
+    if (now - lastTap < 300) {
+      toggleTimer();
+    }
+    lastTap = now;
+  });
+</script>
+
+</body>
+</html>
